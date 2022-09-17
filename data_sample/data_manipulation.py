@@ -6,9 +6,8 @@ from transformers import pipeline
 
 
 def convert_lens_data_to_df(lens_data: dict) -> pd.DataFrame:
-    items = lens_data['data']['explorePublications']['items']
     content_list, created_list = [], []
-    for item in items:
+    for item in lens_data:
         content_list.append(item['metadata']['content'])
         created_list.append(item['createdAt'])
 
@@ -40,11 +39,16 @@ def build_timeseries(df: pd.DataFrame) -> pd.Series:
 
 if __name__ == "__main__":
 
+    # NOTE: Script expects the file of S3 bucket as posts.json
     with open('posts.json') as f:
         lens_data = json.load(f)
 
+    # Convert data into df
     df_lens = convert_lens_data_to_df(lens_data=lens_data)
-    df_lens_sentiment = get_sentiment_data(df=df_lens)
 
+    # Compute sentiment analysis
+    df_lens_sentiment = get_sentiment_data(df=df_lens)
     timeseries = build_timeseries(df=df_lens_sentiment)
+
+
     print("Run")
