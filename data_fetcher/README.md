@@ -1,0 +1,3 @@
+- Fetch data from 2 dune dashboards (or own dashboard)
+- Fetch data from Lens
+- Store in AWS DB
