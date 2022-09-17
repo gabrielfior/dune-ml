@@ -1,4 +1,5 @@
 import json
+from datetime import date
 
 import pandas as pd
 from transformers import pipeline
@@ -15,6 +16,7 @@ def convert_lens_data_to_df(lens_data: dict) -> pd.DataFrame:
     df.rename(columns={0: "content"}, inplace=True)
     df['created_at'] = created_list
     df.created_at = pd.to_datetime(df.created_at)
+    df_lens_sentiment['date'] = df_lens_sentiment.created_at.apply(lambda x: date(x.year, x.month, x.day))
 
     return df
 
@@ -31,6 +33,11 @@ def get_sentiment_data(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def build_timeseries(df: pd.DataFrame) -> pd.Series:
+    timeseries = df.groupby(by=["sentiment_label", "date"]).count()['content']
+    return timeseries
+
+
 if __name__ == "__main__":
 
     with open('posts.json') as f:
@@ -39,4 +46,5 @@ if __name__ == "__main__":
     df_lens = convert_lens_data_to_df(lens_data=lens_data)
     df_lens_sentiment = get_sentiment_data(df=df_lens)
 
+    timeseries = build_timeseries(df=df_lens_sentiment)
     print("Run")
