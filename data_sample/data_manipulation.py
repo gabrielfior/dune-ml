@@ -1,10 +1,15 @@
 import json
+import os
 from datetime import date
 
 import boto3
 import pandas as pd
+from dotenv import load_dotenv
 from transformers import pipeline
 
+from data_fetcher.S3Storer import S3Storer
+
+load_dotenv()
 
 def convert_lens_data_to_df(lens_data: dict) -> pd.DataFrame:
     content_list, created_list = [], []
@@ -44,7 +49,7 @@ if __name__ == "__main__":
     # NOTE: Script expects the file of S3 bucket as posts.json
     s3 = boto3.client('s3', aws_access_key_id=os.environ['AWS_ACCESS_KEY'],
                       aws_secret_access_key=os.environ['AWS_SECRET_KEY'])
-    obj = s3.get_object(Bucket='dune-ml', Key='PUBLICATIONS.json')
+    obj = s3.get_object(Bucket='dune-ml', Key='PUBLICATIONS_v3.json')
     result = obj['Body'].read().decode('utf-8')
     lens_data = json.loads(result)
 
@@ -56,6 +61,9 @@ if __name__ == "__main__":
     timeseries = build_timeseries(df=df_lens_sentiment)
 
     # TODO: Change df to records
+    df_lens_sentiment.to_csv("sentiment_v3.csv")
     # TODO: Inject dictionary to S3
+    # s3storer = S3Storer(file_name="sentiment_data")
+    # s3storer.store_json_inside_bucket(records)
     # TODO: Plot dataframe
     print("Run")
