@@ -1,4 +1,6 @@
 import json
+
+import pandas as pd
 from transformers import pipeline
 
 model_path = "cardiffnlp/twitter-xlm-roberta-base-sentiment"
@@ -7,14 +9,17 @@ sentiment_task = pipeline("sentiment-analysis", model=model_path, tokenizer=mode
 if __name__ == "__main__":
 
     with open('posts.json') as f:
-        d = json.load(f)
-        print(d)
+        lens_data = json.load(f)
 
-    items = d['data']['explorePublications']['items']
-    content = []
+    items = lens_data['data']['explorePublications']['items']
+    content_list, created_list = [], []
     for item in items:
-        content.append(item['metadata']['content'])
+        content_list.append(item['metadata']['content'])
+        created_list.append(item['createdAt'])
 
-    sentiment_list = list(map(sentiment_task, content))
+    df = pd.DataFrame(content_list)
+    df.rename(columns={0: "content"}, inplace=True)
+    df['created_at'] = created_list
+    df.created_at = pd.to_datetime(df.created_at)
 
-    print("Run")
+    sentiment_list = list(map(sentiment_task, content_list))
