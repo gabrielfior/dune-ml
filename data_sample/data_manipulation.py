@@ -22,7 +22,8 @@ def convert_lens_data_to_df(lens_data: dict) -> pd.DataFrame:
 
 def get_sentiment_data(df: pd.DataFrame) -> pd.DataFrame:
     model_path = "cardiffnlp/twitter-xlm-roberta-base-sentiment"
-    sentiment_task = pipeline("sentiment-analysis", model=model_path, tokenizer=model_path)
+    sentiment_task = pipeline("sentiment-analysis", model=model_path, tokenizer=model_path, max_length=512,
+                              truncation=True)
     df['sentiment_dict'] = df.content.apply(lambda x: sentiment_task(x))
     df['sentiment_label'] = df.sentiment_dict.apply(lambda x: x[0]['label'])
     df['sentiment_score'] = df.sentiment_dict.apply(lambda x: x[0]['score'])
