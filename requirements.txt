@@ -4,10 +4,9 @@ requests==2.28.1
 python-dotenv==0.21.0
 retry==0.9.2
 dune-client
-pandas==1.4.4
+pandas~=1.4.3
 streamlit==1.12.2
 matplotlib==3.6.0
 tqdm==4.64.1
-tqdm==4.64.1
 transformers==4.22.1
-pandas==1.4.4
+numpy~=1.23.1
