@@ -50,5 +50,4 @@ if __name__ == "__main__":
     df_lens_sentiment = get_sentiment_data(df=df_lens)
     timeseries = build_timeseries(df=df_lens_sentiment)
 
-
     print("Run")
