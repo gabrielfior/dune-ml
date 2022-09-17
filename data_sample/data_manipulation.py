@@ -1,6 +1,7 @@
 import json
 from datetime import date
 
+import boto3
 import pandas as pd
 from transformers import pipeline
 
@@ -41,8 +42,11 @@ def build_timeseries(df: pd.DataFrame) -> pd.Series:
 if __name__ == "__main__":
 
     # NOTE: Script expects the file of S3 bucket as posts.json
-    with open('posts.json') as f:
-        lens_data = json.load(f)
+    s3 = boto3.client('s3', aws_access_key_id=os.environ['AWS_ACCESS_KEY'],
+                      aws_secret_access_key=os.environ['AWS_SECRET_KEY'])
+    obj = s3.get_object(Bucket='dune-ml', Key='PUBLICATIONS.json')
+    result = obj['Body'].read().decode('utf-8')
+    lens_data = json.loads(result)
 
     # Convert data into df
     df_lens = convert_lens_data_to_df(lens_data=lens_data)
@@ -51,4 +55,7 @@ if __name__ == "__main__":
     df_lens_sentiment = get_sentiment_data(df=df_lens)
     timeseries = build_timeseries(df=df_lens_sentiment)
 
+    # TODO: Change df to records
+    # TODO: Inject dictionary to S3
+    # TODO: Plot dataframe
     print("Run")
