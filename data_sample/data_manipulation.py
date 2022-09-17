@@ -16,7 +16,7 @@ def convert_lens_data_to_df(lens_data: dict) -> pd.DataFrame:
     df.rename(columns={0: "content"}, inplace=True)
     df['created_at'] = created_list
     df.created_at = pd.to_datetime(df.created_at)
-    df_lens_sentiment['date'] = df_lens_sentiment.created_at.apply(lambda x: date(x.year, x.month, x.day))
+    df['date'] = df.created_at.apply(lambda x: date(x.year, x.month, x.day))
 
     return df
 
