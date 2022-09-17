@@ -23,3 +23,8 @@ if __name__ == "__main__":
     df.created_at = pd.to_datetime(df.created_at)
 
     sentiment_list = list(map(sentiment_task, content_list))
+    df['sentiment'] = sentiment_list
+    df['sentiment_label'] = df.sentiment.apply(lambda x: x[0]['label'])
+    df['sentiment_score'] = df.sentiment.apply(lambda x: x[0]['score'])
+
+    print("Run")
