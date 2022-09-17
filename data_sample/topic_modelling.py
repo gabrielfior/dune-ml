@@ -3,6 +3,7 @@ import os
 
 import boto3
 from bertopic import BERTopic
+from sklearn.feature_extraction import text
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -33,11 +34,12 @@ if __name__ == "__main__":
 
     # Convert data into df
     df_lens = convert_lens_data_to_df(lens_data=lens_data)
-    posts = df_lens.content.to_list()[:500]
-    created_at = df_lens.created_at.to_list()[:500]
+    stop = text.ENGLISH_STOP_WORDS
+    df_lens.content = df_lens.content.apply(
+        lambda words: ' '.join(word.lower() for word in words.split() if word not in stop))
+    posts = df_lens.content.to_list()
+    created_at = df_lens.created_at.to_list()
 
     topic_model = BERTopic(verbose=True, n_gram_range=(1, 3), min_topic_size=7)
     topics, probs = topic_model.fit_transform(posts)
     plot_figures(created_at=created_at, posts=posts, topic_model=topic_model, topics=topics)
-
-    print(topics)
