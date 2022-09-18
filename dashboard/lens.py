@@ -27,7 +27,7 @@ def extract_sentiment_from_content(nlp, content):
 
 @st.experimental_memo(ttl=300)
 def get_df_with_sentiment():
-    nlp=spacy.load('xx_ent_wiki_sm')
+    nlp=spacy.load('en_core_web_sm')
     nlp.add_pipe('spacytextblob')
     
     # fetch publications from aws s3

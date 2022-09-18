@@ -24,8 +24,6 @@ def display(tab):
     
     tab.markdown('Data source: [@niftytable Dune query](https://dune.com/queries/781918)')
 
-
-
     df = get_df_wallets()
     df['datetime'] = pd.to_datetime(df['day'])
 
