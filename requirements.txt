@@ -8,4 +8,6 @@ pandas==1.4.4
 streamlit==1.12.2
 matplotlib==3.6.0
 tqdm==4.64.1
-bertopic==0.12.0
+prophet==1.1.1
+spacy==3.4.1
+spacytextblob==4.0.0

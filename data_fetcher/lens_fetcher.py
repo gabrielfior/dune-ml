@@ -15,7 +15,7 @@ class LensFetcher:
             print ('exception raised')
             raise Exception("Query failed to run by returning code of {}. {}".format(request.status_code, query))
 
-    def run_until_end(self, max_iterations = 100):
+    def run_until_end(self, max_iterations = 50000000):
         total_count = 1 # dummy initialization for loop to start
         cursor = "{}"
         data_items = []

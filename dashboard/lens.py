@@ -1,5 +1,4 @@
 # This file has logic for displaying data from Lens API.
-import boto3
 import json
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
@@ -10,6 +9,8 @@ import os
 from spacytextblob.spacytextblob import SpacyTextBlob
 import pandas as pd
 from io import BytesIO
+
+from s3_handler import S3Handler
 
 def define_sentiment(polarity):
     if polarity < -0.3:
@@ -28,15 +29,12 @@ def extract_sentiment_from_content(nlp, content):
 def get_df_with_sentiment():
     nlp=spacy.load('xx_ent_wiki_sm')
     nlp.add_pipe('spacytextblob')
-
+    
     # fetch publications from aws s3
-    s3 = boto3.client('s3', aws_access_key_id=os.environ['AWS_ACCESS_KEY'],
-                  aws_secret_access_key=os.environ['AWS_SECRET_KEY'])
-    obj = s3.get_object(Bucket='dune-ml', Key='PUBLICATIONS.json')
-    result = obj['Body'].read().decode('utf-8')
-    lens_data = json.loads(result)
+    s3_handler = S3Handler()
+    lens_data = s3_handler.read_object('PUBLICATIONS.json')
     df = pd.DataFrame(lens_data)
-    #df = df.dropna()
+    
     df['createdAt'] = pd.to_datetime(df['createdAt'])
     df['content'] = df['metadata'].apply(lambda x: x['content'])
     df['doc'] = df['content'].apply(nlp)
@@ -50,10 +48,15 @@ def get_df_with_sentiment():
 
 
 def display(tab):
-    tab.write('dune')
+
+    tab.subheader('Sentiment analysis')
+    
+    tab.markdown('We used the excellent [spacy package](https://spacy.io/) for sentiment classification of Lens publications.')
+    
+    tab.markdown('Having the sentiment of each publication, we are able to plot the temporal evolution each sentiment (pos, neg, neutral).')
+    
 
     df = get_df_with_sentiment()
-    #print(df.head())
 
     # plotting
     grouped_data = df.groupby([pd.Grouper(key='createdAt', axis=0, freq='h')])[['is_negative','is_positive','is_neutral',

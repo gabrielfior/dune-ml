@@ -9,16 +9,10 @@ import dotenv
 dotenv.load_dotenv(pathlib.Path(__file__).parent.parent.joinpath('.env'))
 import dune
 import lens
-import info
 
 st.title('Dune & Lens dashboard')
 
-tab1, tab2, tab3 = st.tabs(["Dune", "Lens","Info"])
+tab1, tab2 = st.tabs(["Dune", "Lens"])
 
 dune.display(tab1)
-
-
 lens.display(tab2)
-
-
-info.display(tab3)
