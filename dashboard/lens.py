@@ -7,7 +7,7 @@ from spacytextblob.spacytextblob import SpacyTextBlob
 import pandas as pd
 from wordcloud import WordCloud
 from io import BytesIO
-
+from sklearn.feature_extraction import text
 from s3_handler import S3Handler
 
 @st.experimental_memo(ttl=300)
@@ -20,6 +20,25 @@ def get_df_with_sentiment():
     df['createdAt'] = pd.to_datetime(df['createdAt'])
     return df    
 
+def get_wordcloud_from_content(df, key, wordcloud_color):
+    pos_words = df[df[key]]['content'].values
+    stop_words = text.ENGLISH_STOP_WORDS.union(['https','http','com'])
+    wc = WordCloud(background_color="white", max_words=500, colormap=wordcloud_color, stopwords=stop_words)    
+    wc.generate_from_text(' '.join(pos_words))
+    #print ('oi', 'https' in all_words)
+    return wc
+
+def plot_wordcloud(tab,df, key, title, wordcloud_color='Greens'):
+    wc_pos = get_wordcloud_from_content(df, key=key, wordcloud_color=wordcloud_color)
+    
+    fig1, ax1 = plt.subplots(figsize=(16,9))
+    ax1.imshow(wc_pos, interpolation='bilinear')
+    ax1.set_title(title)
+    ax1.set_axis_off()
+
+    buf2 = BytesIO()
+    fig1.savefig(buf2, format="png")
+    tab.image(buf2)
 
 def display(tab):
 
@@ -49,14 +68,7 @@ def display(tab):
     fig.savefig(buf, format="png")
     tab.image(buf)
 
-    #plot_wordcloud
-    pos_words = df[df['is_positive']]['content'].values
-    wc = WordCloud(background_color="white", max_words=1000)
-    wc.generate_from_text(' '.join(pos_words))
-    
-    fig2, ax2 = plt.subplots()
-    ax2.imshow(wc, interpolation='bilinear')
-    #ax2.axis("off")
-    buf2 = BytesIO()
-    fig2.savefig(buf2, format="png")
-    tab.image(buf2)
+    # Wordcloud
+    plot_wordcloud(tab,df,  'is_positive', title='Positive words', wordcloud_color='Greens')
+    plot_wordcloud(tab,df,  'is_negative', title='Negative words', wordcloud_color='Reds')
+    plot_wordcloud(tab,df,  'is_neutral', title='Neutral words', wordcloud_color='Blues')
