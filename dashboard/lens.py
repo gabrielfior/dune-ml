@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import seaborn as sns
 import spacy
+import en_core_web_sm
 import streamlit as st
 from spacytextblob.spacytextblob import SpacyTextBlob
 import pandas as pd
@@ -25,7 +26,7 @@ def extract_sentiment_from_content(nlp, content):
 
 @st.experimental_memo(ttl=300)
 def get_df_with_sentiment():
-    nlp=spacy.load('en_core_web_sm')
+    nlp = en_core_web_sm.load()
     nlp.add_pipe('spacytextblob')
     
     # fetch publications from aws s3
