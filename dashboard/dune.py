@@ -3,7 +3,6 @@ import streamlit as st
 import pandas as pd
 from s3_handler import S3Handler
 import matplotlib.dates as mdates
-from io import BytesIO
 import prophet
 from prophet.plot import plot_plotly
 import matplotlib.pyplot as plt

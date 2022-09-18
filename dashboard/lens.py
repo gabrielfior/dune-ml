@@ -1,11 +1,9 @@
 # This file has logic for displaying data from Lens API.
-import json
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import seaborn as sns
 import spacy
 import streamlit as st
-import os
 from spacytextblob.spacytextblob import SpacyTextBlob
 import pandas as pd
 from io import BytesIO
